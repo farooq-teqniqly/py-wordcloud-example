@@ -1,3 +1,17 @@
+"""
+This script downloads a web page using BeautifulSoup and saves it to a file.
+It utilizes Selenium WebDriver with Chrome to retrieve the web page content.
+
+Usage:
+python script_name.py --url <web_page_url> --out-file <output_file_path>
+
+Required Arguments:
+--url           URL of the web page to download
+--out-file      Path of the output file to save the downloaded content
+
+Example:
+python script_name.py --url https://example.com --out-file output.json
+"""
 import argparse
 import json
 
@@ -10,6 +24,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 
 def init_chrome_driver():
+    """Initialize and return a Chrome WebDriver instance."""
     chrome_options = Options()
     chrome_options.add_argument("--ignore-certificate-errors")
     chrome_options.add_argument("--incognito")
@@ -21,14 +36,15 @@ def init_chrome_driver():
 
 
 def download_url(url, chrome_driver):
+    """Download the web page content using the provided Chrome WebDriver instance."""
     chrome_driver.get(url)
 
     wait = WebDriverWait(chrome_driver, 10)
     wait.until(ec.visibility_of_element_located((By.CSS_SELECTOR, ".session-block__title")))
-    return
 
 
 def extract_session_summaries(html):
+    """Extract session summaries from the HTML content."""
     soup = BeautifulSoup(html, "html.parser")
     div_elements = soup.select('.session-block__content-row__block--description')
     summaries = []
@@ -45,6 +61,7 @@ def extract_session_summaries(html):
 
 
 def main(url, out_file, chrome_driver):
+    """Main function to download a web page using BeautifulSoup and save it to a file."""
     download_url(url, chrome_driver)
     summaries = extract_session_summaries(chrome_driver.page_source)
 
